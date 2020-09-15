@@ -1,32 +1,25 @@
 package org.muellners.finscale.deposit.web.rest
 
+import javax.persistence.EntityManager
+import kotlin.test.assertNotNull
+import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.hasItem
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.mockito.MockitoAnnotations
 import org.muellners.finscale.deposit.DepositAccountManagementApp
 import org.muellners.finscale.deposit.config.SecurityBeanOverrideConfiguration
 import org.muellners.finscale.deposit.domain.AvailableTransactionType
 import org.muellners.finscale.deposit.repository.AvailableTransactionTypeRepository
 import org.muellners.finscale.deposit.web.rest.errors.ExceptionTranslator
-
-import kotlin.test.assertNotNull
-
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.validation.Validator
-import javax.persistence.EntityManager
-
-import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.hasItem
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
+import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -34,7 +27,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.Validator
 
 /**
  * Integration tests for the [AvailableTransactionTypeResource] REST controller.
@@ -44,7 +39,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest(classes = [SecurityBeanOverrideConfiguration::class, DepositAccountManagementApp::class])
 @AutoConfigureMockMvc
 @WithMockUser
-class AvailableTransactionTypeResourceIT  {
+class AvailableTransactionTypeResourceIT {
 
     @Autowired
     private lateinit var availableTransactionTypeRepository: AvailableTransactionTypeRepository
@@ -61,28 +56,24 @@ class AvailableTransactionTypeResourceIT  {
     @Autowired
     private lateinit var validator: Validator
 
-
     @Autowired
     private lateinit var em: EntityManager
-
 
     private lateinit var restAvailableTransactionTypeMockMvc: MockMvc
 
     private lateinit var availableTransactionType: AvailableTransactionType
 
-    
     @BeforeEach
     fun setup() {
         MockitoAnnotations.initMocks(this)
-        val availableTransactionTypeResource = AvailableTransactionTypeResource(availableTransactionTypeRepository)		
-         this.restAvailableTransactionTypeMockMvc = MockMvcBuilders.standaloneSetup(availableTransactionTypeResource)		
-             .setCustomArgumentResolvers(pageableArgumentResolver)		
-             .setControllerAdvice(exceptionTranslator)		
-             .setConversionService(createFormattingConversionService())		
-             .setMessageConverters(jacksonMessageConverter)		
+        val availableTransactionTypeResource = AvailableTransactionTypeResource(availableTransactionTypeRepository)
+         this.restAvailableTransactionTypeMockMvc = MockMvcBuilders.standaloneSetup(availableTransactionTypeResource)
+             .setCustomArgumentResolvers(pageableArgumentResolver)
+             .setControllerAdvice(exceptionTranslator)
+             .setConversionService(createFormattingConversionService())
+             .setMessageConverters(jacksonMessageConverter)
              .setValidator(validator).build()
     }
-
 
     @BeforeEach
     fun initTest() {
@@ -129,7 +120,6 @@ class AvailableTransactionTypeResourceIT  {
         assertThat(availableTransactionTypeList).hasSize(databaseSizeBeforeCreate)
     }
 
-
     @Test
     @Transactional
     fun checkTransactionTypeIsRequired() {
@@ -155,14 +145,14 @@ class AvailableTransactionTypeResourceIT  {
     fun getAllAvailableTransactionTypes() {
         // Initialize the database
         availableTransactionTypeRepository.saveAndFlush(availableTransactionType)
-        
+
         // Get all the availableTransactionTypeList
         restAvailableTransactionTypeMockMvc.perform(get("/api/available-transaction-types?sort=id,desc"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(availableTransactionType.id?.toInt())))
-            .andExpect(jsonPath("$.[*].transactionType").value(hasItem(DEFAULT_TRANSACTION_TYPE)))    }
-    
+            .andExpect(jsonPath("$.[*].transactionType").value(hasItem(DEFAULT_TRANSACTION_TYPE))) }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -178,7 +168,7 @@ class AvailableTransactionTypeResourceIT  {
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(availableTransactionType.id?.toInt()))
-            .andExpect(jsonPath("$.transactionType").value(DEFAULT_TRANSACTION_TYPE))    }
+            .andExpect(jsonPath("$.transactionType").value(DEFAULT_TRANSACTION_TYPE)) }
 
     @Test
     @Transactional
@@ -222,7 +212,6 @@ class AvailableTransactionTypeResourceIT  {
     fun updateNonExistingAvailableTransactionType() {
         val databaseSizeBeforeUpdate = availableTransactionTypeRepository.findAll().size
 
-
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restAvailableTransactionTypeMockMvc.perform(
             put("/api/available-transaction-types")
@@ -254,7 +243,6 @@ class AvailableTransactionTypeResourceIT  {
         val availableTransactionTypeList = availableTransactionTypeRepository.findAll()
         assertThat(availableTransactionTypeList).hasSize(databaseSizeBeforeDelete - 1)
     }
-
 
     companion object {
 

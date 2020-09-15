@@ -1,32 +1,25 @@
 package org.muellners.finscale.deposit.web.rest
 
-import org.muellners.finscale.deposit.DepositAccountManagementApp
-import org.muellners.finscale.deposit.config.SecurityBeanOverrideConfiguration
-import org.muellners.finscale.deposit.domain.Action
-import org.muellners.finscale.deposit.repository.ActionRepository
-import org.muellners.finscale.deposit.web.rest.errors.ExceptionTranslator
-
+import javax.persistence.EntityManager
 import kotlin.test.assertNotNull
-
+import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.MockitoAnnotations
+import org.muellners.finscale.deposit.DepositAccountManagementApp
+import org.muellners.finscale.deposit.config.SecurityBeanOverrideConfiguration
+import org.muellners.finscale.deposit.repository.ActionViewRepository
+import org.muellners.finscale.deposit.views.Action
+import org.muellners.finscale.deposit.web.rest.errors.ExceptionTranslator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.validation.Validator
-import javax.persistence.EntityManager
-
-import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.hasItem
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
+import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -34,7 +27,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.Validator
 
 /**
  * Integration tests for the [ActionResource] REST controller.
@@ -44,10 +39,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest(classes = [SecurityBeanOverrideConfiguration::class, DepositAccountManagementApp::class])
 @AutoConfigureMockMvc
 @WithMockUser
-class ActionResourceIT  {
+class ActionResourceIT {
 
     @Autowired
-    private lateinit var actionRepository: ActionRepository
+    private lateinit var actionViewRepository: ActionViewRepository
 
     @Autowired
     private lateinit var jacksonMessageConverter: MappingJackson2HttpMessageConverter
@@ -61,28 +56,24 @@ class ActionResourceIT  {
     @Autowired
     private lateinit var validator: Validator
 
-
     @Autowired
     private lateinit var em: EntityManager
-
 
     private lateinit var restActionMockMvc: MockMvc
 
     private lateinit var action: Action
 
-    
     @BeforeEach
     fun setup() {
         MockitoAnnotations.initMocks(this)
-        val actionResource = ActionResource(actionRepository)		
-         this.restActionMockMvc = MockMvcBuilders.standaloneSetup(actionResource)		
-             .setCustomArgumentResolvers(pageableArgumentResolver)		
-             .setControllerAdvice(exceptionTranslator)		
-             .setConversionService(createFormattingConversionService())		
-             .setMessageConverters(jacksonMessageConverter)		
+        val actionResource = ActionResource(actionViewRepository)
+         this.restActionMockMvc = MockMvcBuilders.standaloneSetup(actionResource)
+             .setCustomArgumentResolvers(pageableArgumentResolver)
+             .setControllerAdvice(exceptionTranslator)
+             .setConversionService(createFormattingConversionService())
+             .setMessageConverters(jacksonMessageConverter)
              .setValidator(validator).build()
     }
-
 
     @BeforeEach
     fun initTest() {
@@ -93,7 +84,7 @@ class ActionResourceIT  {
     @Transactional
     @Throws(Exception::class)
     fun createAction() {
-        val databaseSizeBeforeCreate = actionRepository.findAll().size
+        val databaseSizeBeforeCreate = actionViewRepository.findAll().size
 
         // Create the Action
         restActionMockMvc.perform(
@@ -103,7 +94,7 @@ class ActionResourceIT  {
         ).andExpect(status().isCreated)
 
         // Validate the Action in the database
-        val actionList = actionRepository.findAll()
+        val actionList = actionViewRepository.findAll()
         assertThat(actionList).hasSize(databaseSizeBeforeCreate + 1)
         val testAction = actionList[actionList.size - 1]
         assertThat(testAction.identifier).isEqualTo(DEFAULT_IDENTIFIER)
@@ -115,7 +106,7 @@ class ActionResourceIT  {
     @Test
     @Transactional
     fun createActionWithExistingId() {
-        val databaseSizeBeforeCreate = actionRepository.findAll().size
+        val databaseSizeBeforeCreate = actionViewRepository.findAll().size
 
         // Create the Action with an existing ID
         action.id = 1L
@@ -128,15 +119,14 @@ class ActionResourceIT  {
         ).andExpect(status().isBadRequest)
 
         // Validate the Action in the database
-        val actionList = actionRepository.findAll()
+        val actionList = actionViewRepository.findAll()
         assertThat(actionList).hasSize(databaseSizeBeforeCreate)
     }
-
 
     @Test
     @Transactional
     fun checkNameIsRequired() {
-        val databaseSizeBeforeTest = actionRepository.findAll().size
+        val databaseSizeBeforeTest = actionViewRepository.findAll().size
         // set the field null
         action.name = null
 
@@ -148,7 +138,7 @@ class ActionResourceIT  {
                 .content(convertObjectToJsonBytes(action))
         ).andExpect(status().isBadRequest)
 
-        val actionList = actionRepository.findAll()
+        val actionList = actionViewRepository.findAll()
         assertThat(actionList).hasSize(databaseSizeBeforeTest)
     }
 
@@ -157,8 +147,8 @@ class ActionResourceIT  {
     @Throws(Exception::class)
     fun getAllActions() {
         // Initialize the database
-        actionRepository.saveAndFlush(action)
-        
+        actionViewRepository.saveAndFlush(action)
+
         // Get all the actionList
         restActionMockMvc.perform(get("/api/actions?sort=id,desc"))
             .andExpect(status().isOk)
@@ -167,14 +157,14 @@ class ActionResourceIT  {
             .andExpect(jsonPath("$.[*].identifier").value(hasItem(DEFAULT_IDENTIFIER)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
-            .andExpect(jsonPath("$.[*].transactionType").value(hasItem(DEFAULT_TRANSACTION_TYPE)))    }
-    
+            .andExpect(jsonPath("$.[*].transactionType").value(hasItem(DEFAULT_TRANSACTION_TYPE))) }
+
     @Test
     @Transactional
     @Throws(Exception::class)
     fun getAction() {
         // Initialize the database
-        actionRepository.saveAndFlush(action)
+        actionViewRepository.saveAndFlush(action)
 
         val id = action.id
         assertNotNull(id)
@@ -187,7 +177,7 @@ class ActionResourceIT  {
             .andExpect(jsonPath("$.identifier").value(DEFAULT_IDENTIFIER))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
-            .andExpect(jsonPath("$.transactionType").value(DEFAULT_TRANSACTION_TYPE))    }
+            .andExpect(jsonPath("$.transactionType").value(DEFAULT_TRANSACTION_TYPE)) }
 
     @Test
     @Transactional
@@ -201,14 +191,14 @@ class ActionResourceIT  {
     @Transactional
     fun updateAction() {
         // Initialize the database
-        actionRepository.saveAndFlush(action)
+        actionViewRepository.saveAndFlush(action)
 
-        val databaseSizeBeforeUpdate = actionRepository.findAll().size
+        val databaseSizeBeforeUpdate = actionViewRepository.findAll().size
 
         // Update the action
         val id = action.id
         assertNotNull(id)
-        val updatedAction = actionRepository.findById(id).get()
+        val updatedAction = actionViewRepository.findById(id).get()
         // Disconnect from session so that the updates on updatedAction are not directly saved in db
         em.detach(updatedAction)
         updatedAction.identifier = UPDATED_IDENTIFIER
@@ -223,7 +213,7 @@ class ActionResourceIT  {
         ).andExpect(status().isOk)
 
         // Validate the Action in the database
-        val actionList = actionRepository.findAll()
+        val actionList = actionViewRepository.findAll()
         assertThat(actionList).hasSize(databaseSizeBeforeUpdate)
         val testAction = actionList[actionList.size - 1]
         assertThat(testAction.identifier).isEqualTo(UPDATED_IDENTIFIER)
@@ -235,8 +225,7 @@ class ActionResourceIT  {
     @Test
     @Transactional
     fun updateNonExistingAction() {
-        val databaseSizeBeforeUpdate = actionRepository.findAll().size
-
+        val databaseSizeBeforeUpdate = actionViewRepository.findAll().size
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restActionMockMvc.perform(
@@ -246,7 +235,7 @@ class ActionResourceIT  {
         ).andExpect(status().isBadRequest)
 
         // Validate the Action in the database
-        val actionList = actionRepository.findAll()
+        val actionList = actionViewRepository.findAll()
         assertThat(actionList).hasSize(databaseSizeBeforeUpdate)
     }
 
@@ -255,9 +244,9 @@ class ActionResourceIT  {
     @Throws(Exception::class)
     fun deleteAction() {
         // Initialize the database
-        actionRepository.saveAndFlush(action)
+        actionViewRepository.saveAndFlush(action)
 
-        val databaseSizeBeforeDelete = actionRepository.findAll().size
+        val databaseSizeBeforeDelete = actionViewRepository.findAll().size
 
         // Delete the action
         restActionMockMvc.perform(
@@ -266,10 +255,9 @@ class ActionResourceIT  {
         ).andExpect(status().isNoContent)
 
         // Validate the database contains one less item
-        val actionList = actionRepository.findAll()
+        val actionList = actionViewRepository.findAll()
         assertThat(actionList).hasSize(databaseSizeBeforeDelete - 1)
     }
-
 
     companion object {
 

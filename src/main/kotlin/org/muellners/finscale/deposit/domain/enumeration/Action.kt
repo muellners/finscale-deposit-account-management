@@ -3,6 +3,6 @@ package org.muellners.finscale.deposit.domain.enumeration
 /**
  * The Action enumeration.
  */
-enum class Action{
+enum class Action {
         ACTIVATE, DEACTIVATE
 }

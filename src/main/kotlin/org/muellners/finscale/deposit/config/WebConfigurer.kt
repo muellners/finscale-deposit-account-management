@@ -3,9 +3,13 @@ package org.muellners.finscale.deposit.config
 import io.github.jhipster.config.JHipsterConstants
 import io.github.jhipster.config.JHipsterProperties
 import io.github.jhipster.config.h2.H2ConfigurationHelper
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.info.License
 import javax.servlet.ServletContext
 import javax.servlet.ServletException
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.ServletContextInitializer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -50,6 +54,21 @@ class WebConfigurer(
             }
         }
         return CorsFilter(source)
+    }
+
+    @Bean
+    fun customOpenAPI(
+        @Value("\${spring.application.description}") appDesciption: String?,
+        @Value("\${spring.application.version}") appVersion: String?
+    ): OpenAPI? {
+        return OpenAPI()
+            .info(Info()
+                .title("Covider application API")
+                .version(appVersion)
+                .description(appDesciption)
+                .termsOfService("http://swagger.io/terms/")
+                .license(License().name("N/A").url("N/A")))
+        //   .license(new License().name("Apache 2.0").url("http://springdoc.org")));
     }
 
     /**

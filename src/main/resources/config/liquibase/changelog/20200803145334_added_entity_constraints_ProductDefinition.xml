@@ -7,18 +7,12 @@
         Added the constraints for entity ProductDefinition.
     -->
     <changeSet id="20200803145334-2" author="jhipster">
-        
-        <addForeignKeyConstraint baseColumnNames="term_id"
-                                 baseTableName="product_definition"
-                                 constraintName="fk_product_definition_term_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="term"/>
 
-        <addForeignKeyConstraint baseColumnNames="currency_id"
+        <addForeignKeyConstraint baseColumnNames="product_instance_id"
                                  baseTableName="product_definition"
-                                 constraintName="fk_product_definition_currency_id"
+                                 constraintName="fk_product_definition_product_instance_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="currency"/>
+                                 referencedTableName="product_instance"/>
 
     </changeSet>
 </databaseChangeLog>

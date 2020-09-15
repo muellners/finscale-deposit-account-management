@@ -1,32 +1,25 @@
 package org.muellners.finscale.deposit.web.rest
 
+import javax.persistence.EntityManager
+import kotlin.test.assertNotNull
+import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.hasItem
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.mockito.MockitoAnnotations
 import org.muellners.finscale.deposit.DepositAccountManagementApp
 import org.muellners.finscale.deposit.config.SecurityBeanOverrideConfiguration
 import org.muellners.finscale.deposit.domain.Charge
 import org.muellners.finscale.deposit.repository.ChargeRepository
 import org.muellners.finscale.deposit.web.rest.errors.ExceptionTranslator
-
-import kotlin.test.assertNotNull
-
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.validation.Validator
-import javax.persistence.EntityManager
-
-import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.hasItem
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
+import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -34,7 +27,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.Validator
 
 /**
  * Integration tests for the [ChargeResource] REST controller.
@@ -44,7 +39,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest(classes = [SecurityBeanOverrideConfiguration::class, DepositAccountManagementApp::class])
 @AutoConfigureMockMvc
 @WithMockUser
-class ChargeResourceIT  {
+class ChargeResourceIT {
 
     @Autowired
     private lateinit var chargeRepository: ChargeRepository
@@ -61,28 +56,24 @@ class ChargeResourceIT  {
     @Autowired
     private lateinit var validator: Validator
 
-
     @Autowired
     private lateinit var em: EntityManager
-
 
     private lateinit var restChargeMockMvc: MockMvc
 
     private lateinit var charge: Charge
 
-    
     @BeforeEach
     fun setup() {
         MockitoAnnotations.initMocks(this)
-        val chargeResource = ChargeResource(chargeRepository)		
-         this.restChargeMockMvc = MockMvcBuilders.standaloneSetup(chargeResource)		
-             .setCustomArgumentResolvers(pageableArgumentResolver)		
-             .setControllerAdvice(exceptionTranslator)		
-             .setConversionService(createFormattingConversionService())		
-             .setMessageConverters(jacksonMessageConverter)		
+        val chargeResource = ChargeResource(chargeRepository)
+         this.restChargeMockMvc = MockMvcBuilders.standaloneSetup(chargeResource)
+             .setCustomArgumentResolvers(pageableArgumentResolver)
+             .setControllerAdvice(exceptionTranslator)
+             .setConversionService(createFormattingConversionService())
+             .setMessageConverters(jacksonMessageConverter)
              .setValidator(validator).build()
     }
-
 
     @BeforeEach
     fun initTest() {
@@ -134,7 +125,6 @@ class ChargeResourceIT  {
         assertThat(chargeList).hasSize(databaseSizeBeforeCreate)
     }
 
-
     @Test
     @Transactional
     fun checkNameIsRequired() {
@@ -160,7 +150,7 @@ class ChargeResourceIT  {
     fun getAllCharges() {
         // Initialize the database
         chargeRepository.saveAndFlush(charge)
-        
+
         // Get all the chargeList
         restChargeMockMvc.perform(get("/api/charges?sort=id,desc"))
             .andExpect(status().isOk)
@@ -171,8 +161,8 @@ class ChargeResourceIT  {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].proportional").value(hasItem(DEFAULT_PROPORTIONAL)))
-            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.toDouble())))    }
-    
+            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.toDouble()))) }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -193,7 +183,7 @@ class ChargeResourceIT  {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
             .andExpect(jsonPath("$.proportional").value(DEFAULT_PROPORTIONAL))
-            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.toDouble()))    }
+            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.toDouble())) }
 
     @Test
     @Transactional
@@ -247,7 +237,6 @@ class ChargeResourceIT  {
     fun updateNonExistingCharge() {
         val databaseSizeBeforeUpdate = chargeRepository.findAll().size
 
-
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restChargeMockMvc.perform(
             put("/api/charges")
@@ -279,7 +268,6 @@ class ChargeResourceIT  {
         val chargeList = chargeRepository.findAll()
         assertThat(chargeList).hasSize(databaseSizeBeforeDelete - 1)
     }
-
 
     companion object {
 

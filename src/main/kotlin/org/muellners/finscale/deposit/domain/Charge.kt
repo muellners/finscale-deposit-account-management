@@ -1,13 +1,12 @@
 package org.muellners.finscale.deposit.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import org.hibernate.annotations.Cache
-import org.hibernate.annotations.CacheConcurrencyStrategy
-
+import java.io.Serializable
 import javax.persistence.*
 import javax.validation.constraints.*
-
-import java.io.Serializable
+import org.hibernate.annotations.Cache
+import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.muellners.finscale.deposit.view.ProductDefinitionView
 
 /**
  * A Charge.
@@ -40,8 +39,8 @@ data class Charge(
     @Column(name = "amount")
     var amount: Double? = null,
 
-    @ManyToOne    @JsonIgnoreProperties(value = ["charges"], allowSetters = true)
-    var productDefinition: ProductDefinition? = null
+    @ManyToOne @JsonIgnoreProperties(value = ["charges"], allowSetters = true)
+    var productDefinitionView: ProductDefinitionView? = null
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 ) : Serializable {
@@ -65,7 +64,6 @@ data class Charge(
         ", proportional='$proportional'" +
         ", amount=$amount" +
         "}"
-
 
     companion object {
         private const val serialVersionUID = 1L

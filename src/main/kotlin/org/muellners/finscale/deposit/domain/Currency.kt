@@ -1,12 +1,10 @@
 package org.muellners.finscale.deposit.domain
 
-import org.hibernate.annotations.Cache
-import org.hibernate.annotations.CacheConcurrencyStrategy
-
+import java.io.Serializable
 import javax.persistence.*
 import javax.validation.constraints.*
-
-import java.io.Serializable
+import org.hibernate.annotations.Cache
+import org.hibernate.annotations.CacheConcurrencyStrategy
 
 /**
  * A Currency.
@@ -56,7 +54,6 @@ data class Currency(
         ", sign='$sign'" +
         ", scale=$scale" +
         "}"
-
 
     companion object {
         private const val serialVersionUID = 1L

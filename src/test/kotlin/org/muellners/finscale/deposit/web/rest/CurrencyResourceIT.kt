@@ -1,32 +1,25 @@
 package org.muellners.finscale.deposit.web.rest
 
+import javax.persistence.EntityManager
+import kotlin.test.assertNotNull
+import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.hasItem
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.mockito.MockitoAnnotations
 import org.muellners.finscale.deposit.DepositAccountManagementApp
 import org.muellners.finscale.deposit.config.SecurityBeanOverrideConfiguration
 import org.muellners.finscale.deposit.domain.Currency
 import org.muellners.finscale.deposit.repository.CurrencyRepository
 import org.muellners.finscale.deposit.web.rest.errors.ExceptionTranslator
-
-import kotlin.test.assertNotNull
-
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.validation.Validator
-import javax.persistence.EntityManager
-
-import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.hasItem
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
+import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -34,7 +27,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.Validator
 
 /**
  * Integration tests for the [CurrencyResource] REST controller.
@@ -44,7 +39,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest(classes = [SecurityBeanOverrideConfiguration::class, DepositAccountManagementApp::class])
 @AutoConfigureMockMvc
 @WithMockUser
-class CurrencyResourceIT  {
+class CurrencyResourceIT {
 
     @Autowired
     private lateinit var currencyRepository: CurrencyRepository
@@ -61,28 +56,24 @@ class CurrencyResourceIT  {
     @Autowired
     private lateinit var validator: Validator
 
-
     @Autowired
     private lateinit var em: EntityManager
-
 
     private lateinit var restCurrencyMockMvc: MockMvc
 
     private lateinit var currency: Currency
 
-    
     @BeforeEach
     fun setup() {
         MockitoAnnotations.initMocks(this)
-        val currencyResource = CurrencyResource(currencyRepository)		
-         this.restCurrencyMockMvc = MockMvcBuilders.standaloneSetup(currencyResource)		
-             .setCustomArgumentResolvers(pageableArgumentResolver)		
-             .setControllerAdvice(exceptionTranslator)		
-             .setConversionService(createFormattingConversionService())		
-             .setMessageConverters(jacksonMessageConverter)		
+        val currencyResource = CurrencyResource(currencyRepository)
+         this.restCurrencyMockMvc = MockMvcBuilders.standaloneSetup(currencyResource)
+             .setCustomArgumentResolvers(pageableArgumentResolver)
+             .setControllerAdvice(exceptionTranslator)
+             .setConversionService(createFormattingConversionService())
+             .setMessageConverters(jacksonMessageConverter)
              .setValidator(validator).build()
     }
-
 
     @BeforeEach
     fun initTest() {
@@ -131,7 +122,6 @@ class CurrencyResourceIT  {
         val currencyList = currencyRepository.findAll()
         assertThat(currencyList).hasSize(databaseSizeBeforeCreate)
     }
-
 
     @Test
     @Transactional
@@ -215,7 +205,7 @@ class CurrencyResourceIT  {
     fun getAllCurrencies() {
         // Initialize the database
         currencyRepository.saveAndFlush(currency)
-        
+
         // Get all the currencyList
         restCurrencyMockMvc.perform(get("/api/currencies?sort=id,desc"))
             .andExpect(status().isOk)
@@ -224,8 +214,8 @@ class CurrencyResourceIT  {
             .andExpect(jsonPath("$.[*].code").value(hasItem(DEFAULT_CODE)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].sign").value(hasItem(DEFAULT_SIGN)))
-            .andExpect(jsonPath("$.[*].scale").value(hasItem(DEFAULT_SCALE)))    }
-    
+            .andExpect(jsonPath("$.[*].scale").value(hasItem(DEFAULT_SCALE))) }
+
     @Test
     @Transactional
     @Throws(Exception::class)
@@ -244,7 +234,7 @@ class CurrencyResourceIT  {
             .andExpect(jsonPath("$.code").value(DEFAULT_CODE))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.sign").value(DEFAULT_SIGN))
-            .andExpect(jsonPath("$.scale").value(DEFAULT_SCALE))    }
+            .andExpect(jsonPath("$.scale").value(DEFAULT_SCALE)) }
 
     @Test
     @Transactional
@@ -294,7 +284,6 @@ class CurrencyResourceIT  {
     fun updateNonExistingCurrency() {
         val databaseSizeBeforeUpdate = currencyRepository.findAll().size
 
-
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCurrencyMockMvc.perform(
             put("/api/currencies")
@@ -326,7 +315,6 @@ class CurrencyResourceIT  {
         val currencyList = currencyRepository.findAll()
         assertThat(currencyList).hasSize(databaseSizeBeforeDelete - 1)
     }
-
 
     companion object {
 

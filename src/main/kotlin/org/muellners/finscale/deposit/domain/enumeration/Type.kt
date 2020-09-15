@@ -3,6 +3,6 @@ package org.muellners.finscale.deposit.domain.enumeration
 /**
  * The Type enumeration.
  */
-enum class Type{
+enum class Type {
         CHECKING, SAVINGS, SHARE
 }

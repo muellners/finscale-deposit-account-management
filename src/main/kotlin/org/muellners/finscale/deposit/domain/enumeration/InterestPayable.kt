@@ -3,6 +3,6 @@ package org.muellners.finscale.deposit.domain.enumeration
 /**
  * The InterestPayable enumeration.
  */
-enum class InterestPayable{
+enum class InterestPayable {
         MATURITY, ANNUALLY, MONTHLY, QUARTERLY
 }
