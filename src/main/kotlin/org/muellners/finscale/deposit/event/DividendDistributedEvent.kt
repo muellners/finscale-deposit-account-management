@@ -5,7 +5,7 @@ import java.util.*
 
 data class DividendDistributedEvent(
     val id: UUID?,
-    val productDefinitionId: String?,
+    val productIdentifier: String?,
     val dueDate: LocalDate?,
     val rate: Double?
 )

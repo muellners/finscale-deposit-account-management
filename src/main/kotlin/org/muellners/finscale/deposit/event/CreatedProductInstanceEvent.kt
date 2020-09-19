@@ -4,7 +4,7 @@ import java.util.*
 
 data class CreatedProductInstanceEvent(
     val id: UUID?,
-    val productDefinitionId: String?,
+    val productIdentifier: String?,
     val customerIdentifier: String?,
     val accountIdentifier: String?,
     val beneficiaries: String?,
