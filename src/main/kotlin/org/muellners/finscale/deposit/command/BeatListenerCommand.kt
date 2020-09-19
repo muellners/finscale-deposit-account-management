@@ -4,10 +4,8 @@ import java.time.LocalDate
 import java.util.*
 import org.axonframework.modelling.command.TargetAggregateIdentifier
 
-data class DividendDistributionCommand(
+data class BeatListenerCommand(
     @TargetAggregateIdentifier
     val id: UUID?,
-    val productIdentifier: String?,
-    val dueDate: LocalDate?,
-    val rate: Double?
+    val forTime: LocalDate?
 )
