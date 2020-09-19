@@ -14,7 +14,7 @@ import org.muellners.finscale.deposit.event.DividendDistributedEvent
 class DividendDistribution() {
     @AggregateIdentifier
     var id: UUID? = null
-    var productDefinitionId: String? = null
+    var productIdentifier: String? = null
     var dueDate: LocalDate? = null
     var rate: Double? = null
 
@@ -23,7 +23,7 @@ class DividendDistribution() {
         AggregateLifecycle.apply(
             DividendDistributedEvent(
                 id = command.id,
-                productDefinitionId = command.productDefinitionId,
+                productIdentifier = command.productIdentifier,
                 dueDate = command.dueDate,
                 rate = command.rate
             )
@@ -33,7 +33,7 @@ class DividendDistribution() {
     @EventSourcingHandler
     fun on(event: DividendDistributedEvent) {
         this.id = event.id
-        this.productDefinitionId = event.productDefinitionId
+        this.productIdentifier = event.productIdentifier
         this.dueDate = event.dueDate
         this.rate = event.rate
     }

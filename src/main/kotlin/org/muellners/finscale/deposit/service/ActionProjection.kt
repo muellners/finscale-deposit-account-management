@@ -27,7 +27,12 @@ class ActionProjection(
     }
 
     @QueryHandler
-    fun handle(query: GetAllActionsQuery): MutableList<ActionView> {
-        return actionViewRepository.findAll()
+    fun handle(query: GetAllActionsQuery): MutableList<Action> {
+        val actionViews = actionViewRepository.findAll()
+        val actions: MutableList<Action> = mutableListOf()
+        actionViews.forEach {
+            actions.add(actionMapper.map(it))
+        }
+        return actions
     }
 }

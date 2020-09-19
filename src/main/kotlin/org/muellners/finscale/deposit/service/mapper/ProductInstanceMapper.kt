@@ -9,11 +9,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class ProductInstanceMapper(
-    val productDefinitionMapper: ProductDefinitionMapper,
     val productDefinitionViewRepository: ProductDefinitionViewRepository
 ) {
     fun map(productInstance: ProductInstance): ProductInstanceView {
-        val optionalProductDefinitionView = productDefinitionViewRepository.findById(productInstance.productDefinitionId!!)
+        val optionalProductDefinitionView = productDefinitionViewRepository.findById(productInstance.productIdentifier!!)
         if (!optionalProductDefinitionView.isPresent) {
             throw IllegalArgumentException("Product definition id cannot be null")
         } else {
@@ -33,7 +32,7 @@ class ProductInstanceMapper(
     fun map(productInstanceView: ProductInstanceView): ProductInstance {
         val productInstance = ProductInstance()
         productInstance.id = UUID.fromString(productInstanceView.id)
-        productInstance.productDefinitionId = productInstanceView.productDefinitionView?.id.toString()
+        productInstance.productIdentifier = productInstanceView.productDefinitionView?.id.toString()
         productInstance.customerIdentifier = productInstanceView.customerIdentifier
         productInstance.accountIdentifier = productInstanceView.accountIdentifier
         productInstance.beneficiaries = productInstanceView.beneficiaries

@@ -41,7 +41,7 @@ class InterestCalculationProjection(
     private val commandGateway: CommandGateway
 ) {
     @EventHandler
-    fun on(event: AccruedEvent): String {
+    fun on(event: AccruedEvent): LocalDate? {
         val accrualDate = event.dueDate
         val productDefinitions: List<ProductDefinitionView> = productDefinitionViewRepository.findAll()
         productDefinitions.forEach(Consumer<ProductDefinitionView> { productDefinitionView: ProductDefinitionView ->
@@ -97,7 +97,7 @@ class InterestCalculationProjection(
                 commandGateway.send<Any>(cashToAccrueJournalEntryCommand)
             }
         })
-        return accrualDate.toString()
+        return accrualDate
     }
 
     @EventHandler
@@ -145,7 +145,7 @@ class InterestCalculationProjection(
 
     @EventHandler
     fun on(event: DividendDistributedEvent) {
-        val optionalProductDefinition: Optional<ProductDefinitionView> = productDefinitionViewRepository.findByIdentifier(event.productDefinitionId!!)
+        val optionalProductDefinition: Optional<ProductDefinitionView> = productDefinitionViewRepository.findByIdentifier(event.productIdentifier!!)
         if (optionalProductDefinition.isPresent) {
             val productDefinitionView: ProductDefinitionView = optionalProductDefinition.get()
             if (productDefinitionView.active!!) {

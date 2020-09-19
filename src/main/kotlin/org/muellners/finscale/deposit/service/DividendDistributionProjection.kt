@@ -19,7 +19,7 @@ class DividendDistributionProjection(
 ) {
     @EventHandler
     fun on(event: DividendDistributedEvent): DividendDistribution {
-        val optionalProductDefinition = productDefinitionViewRepository.findById(event.productDefinitionId.toString())
+        val optionalProductDefinition = productDefinitionViewRepository.findById(event.productIdentifier.toString())
         if (optionalProductDefinition.isPresent) {
             var dividendDistributionView = DividendDistributionView()
             dividendDistributionView.id = event.id.toString()

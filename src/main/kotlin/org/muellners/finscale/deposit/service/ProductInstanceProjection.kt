@@ -21,7 +21,7 @@ class ProductInstanceProjection(
 ) {
     @EventHandler
     fun on(event: CreatedProductInstanceEvent): ProductInstance {
-        val optionalProductDefinitionView = productDefinitionViewRepository.findById(event.productDefinitionId!!)
+        val optionalProductDefinitionView = productDefinitionViewRepository.findById(event.productIdentifier!!)
         if (!optionalProductDefinitionView.isPresent) {
             throw IllegalArgumentException("Product definition id cannot be null")
         } else {
@@ -43,7 +43,7 @@ class ProductInstanceProjection(
     fun on(event: UpdatedProductInstanceEvent): ProductInstance {
 
         val optionalProductInstanceView = productInstanceViewRepository.findById(event.id!!.toString())
-        val optionalProductDefinitionView = productDefinitionViewRepository.findById(event.productDefinitionId!!)
+        val optionalProductDefinitionView = productDefinitionViewRepository.findById(event.productIdentifier!!)
         if (!optionalProductInstanceView.isPresent) {
             throw IllegalArgumentException("Product instance id cannot be null")
         } else if (!optionalProductDefinitionView.isPresent) {

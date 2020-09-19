@@ -13,7 +13,7 @@ import org.muellners.finscale.deposit.event.*
 class ProductInstance() {
     @AggregateIdentifier
     var id: UUID? = null
-    var productDefinitionId: String? = null
+    var productIdentifier: String? = null
     var customerIdentifier: String? = null
     var accountIdentifier: String? = null
     var beneficiaries: String? = null
@@ -32,7 +32,7 @@ class ProductInstance() {
             throw IllegalArgumentException("Customer identifier cannot be null!")
         }
 
-        if (command.productDefinitionId == null) {
+        if (command.productIdentifier == null) {
             throw IllegalArgumentException("Product definition cannot be null!")
         }
 
@@ -43,7 +43,7 @@ class ProductInstance() {
         AggregateLifecycle.apply(
             CreatedProductInstanceEvent(
                 id = command.id,
-                productDefinitionId = command.productDefinitionId,
+                productIdentifier = command.productIdentifier,
                 customerIdentifier = command.customerIdentifier,
                 accountIdentifier = command.accountIdentifier,
                 beneficiaries = command.beneficiaries,
@@ -59,7 +59,7 @@ class ProductInstance() {
         AggregateLifecycle.apply(
             UpdatedProductInstanceEvent(
                 id = command.id,
-                productDefinitionId = command.productDefinitionId,
+                productIdentifier = command.productIdentifier,
                 customerIdentifier = command.customerIdentifier,
                 accountIdentifier = command.accountIdentifier,
                 beneficiaries = command.beneficiaries,
@@ -109,7 +109,7 @@ class ProductInstance() {
     @EventSourcingHandler
     fun on(event: CreatedProductInstanceEvent) {
         this.id = event.id
-        this.productDefinitionId = event.productDefinitionId
+        this.productIdentifier = event.productIdentifier
         this.customerIdentifier = event.customerIdentifier
         this.accountIdentifier = event.accountIdentifier
         this.beneficiaries = event.beneficiaries
@@ -121,7 +121,7 @@ class ProductInstance() {
     @EventSourcingHandler
     fun on(event: UpdatedProductInstanceEvent) {
         this.id = event.id
-        this.productDefinitionId = event.productDefinitionId
+        this.productIdentifier = event.productIdentifier
         this.customerIdentifier = event.customerIdentifier
         this.accountIdentifier = event.accountIdentifier
         this.beneficiaries = event.beneficiaries

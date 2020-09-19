@@ -1,4 +1,4 @@
-package org.muellners.finscale.deposit.domain.productInstance.commands
+package org.muellners.finscale.deposit.service
 
 import java.util.*
 import org.axonframework.commandhandling.CommandHandler
@@ -12,7 +12,6 @@ import org.muellners.finscale.deposit.event.CreatedProductDefinitionEvent
 import org.muellners.finscale.deposit.event.DeletedProductDefinitionEvent
 import org.muellners.finscale.deposit.event.PerformedActionProductDefinitionEvent
 import org.muellners.finscale.deposit.event.UpdatedProductDefinitionEvent
-import org.springframework.lang.NonNull
 
 @Aggregate
 class ProductDefinition() {
@@ -20,7 +19,6 @@ class ProductDefinition() {
     var id: UUID? = null
     var identifier: String? = null
     var type: Type? = null
-    @NonNull
     var name: String? = null
     var description: String? = null
     var minimumBalance: Double? = null

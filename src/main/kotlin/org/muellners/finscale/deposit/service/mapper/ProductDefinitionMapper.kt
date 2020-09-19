@@ -1,7 +1,7 @@
 package org.muellners.finscale.deposit.service.mapper
 
 import java.util.*
-import org.muellners.finscale.deposit.domain.productInstance.commands.ProductDefinition
+import org.muellners.finscale.deposit.service.ProductDefinition
 import org.muellners.finscale.deposit.view.ProductDefinitionView
 import org.springframework.stereotype.Service
 

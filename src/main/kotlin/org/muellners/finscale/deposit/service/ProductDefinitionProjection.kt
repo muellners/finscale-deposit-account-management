@@ -3,7 +3,6 @@ package org.muellners.finscale.deposit.service
 import java.lang.IllegalStateException
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.queryhandling.QueryHandler
-import org.muellners.finscale.deposit.domain.productInstance.commands.ProductDefinition
 import org.muellners.finscale.deposit.event.CreatedProductDefinitionEvent
 import org.muellners.finscale.deposit.event.DeletedProductDefinitionEvent
 import org.muellners.finscale.deposit.event.PerformedActionProductDefinitionEvent

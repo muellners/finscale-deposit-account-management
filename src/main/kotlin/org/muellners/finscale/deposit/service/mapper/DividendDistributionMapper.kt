@@ -12,7 +12,7 @@ class DividendDistributionMapper(
     val productDefinitionViewRepository: ProductDefinitionViewRepository
 ) {
     fun map(dividendDistribution: DividendDistribution): DividendDistributionView {
-        val optionalProductDefinitionView = productDefinitionViewRepository.findById(dividendDistribution.productDefinitionId.toString())
+        val optionalProductDefinitionView = productDefinitionViewRepository.findById(dividendDistribution.productIdentifier.toString())
         if (optionalProductDefinitionView.isPresent) {
             return DividendDistributionView(
                 id = dividendDistribution.id?.toString(),
@@ -28,7 +28,7 @@ class DividendDistributionMapper(
     fun map(dividendDistributionView: DividendDistributionView): DividendDistribution {
         val dividendDistribution = DividendDistribution()
         dividendDistribution.id = UUID.fromString(dividendDistributionView.id)
-        dividendDistribution.productDefinitionId = dividendDistributionView.productDefinitionView!!.id
+        dividendDistribution.productIdentifier = dividendDistributionView.productDefinitionView!!.id
         dividendDistribution.dueDate = dividendDistributionView.dueDate
         dividendDistribution.rate = dividendDistributionView.rate
         return dividendDistribution
