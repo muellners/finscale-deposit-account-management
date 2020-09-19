@@ -33,10 +33,6 @@
       "fieldName": "state",
       "fieldType": "String"
     },
-    {
-      "fieldName": "balance",
-      "fieldType": "Double"
-    }
   ],
   "relationships": [],
   "changelogDate": "20200803145134",

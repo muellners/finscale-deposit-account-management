@@ -4,13 +4,13 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
     <!--
-        Added the constraints for entity Charge.
+        Added the constraints for entity ProductDefinition.
     -->
-    <changeSet id="20200803145634-2" author="jhipster">
-        
-        <addForeignKeyConstraint baseColumnNames="product_definition_id"
-                                 baseTableName="charge"
-                                 constraintName="fk_charge_product_definition_id"
+    <changeSet id="20200803245334-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="product_identifier"
+                                 baseTableName="product_instance"
+                                 constraintName="fk_product_instance_product_definition_id"
                                  referencedColumnNames="id"
                                  referencedTableName="product_definition"/>
 

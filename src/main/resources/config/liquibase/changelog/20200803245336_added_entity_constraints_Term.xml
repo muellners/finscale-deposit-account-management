@@ -6,13 +6,13 @@
     <!--
         Added the constraints for entity ProductDefinition.
     -->
-    <changeSet id="20200803145334-2" author="jhipster">
+    <changeSet id="20200803245336-2" author="jhipster">
 
-        <addForeignKeyConstraint baseColumnNames="product_instance_id"
-                                 baseTableName="product_definition"
-                                 constraintName="fk_product_definition_product_instance_id"
+        <addForeignKeyConstraint baseColumnNames="product_identifier"
+                                 baseTableName="term"
+                                 constraintName="fk_term_product_definition_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="product_instance"/>
+                                 referencedTableName="product_definition"/>
 
     </changeSet>
 </databaseChangeLog>

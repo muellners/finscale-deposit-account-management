@@ -10,12 +10,21 @@
     <!--
         Added the entity ProductInstance.
     -->
+
+<!--    <changeSet id="20200803145134-1-drop" author="xurror">-->
+<!--        <preConditions onFail="MARK_RAN"><tableExists tableName="product_instance"/></preConditions>-->
+<!--        <dropTable tableName="product_instance"/>-->
+<!--    </changeSet>-->
+
     <changeSet id="20200803145134-1" author="jhipster">
         <createTable tableName="product_instance">
-            <column name="id" type="bigint">
+            <column name="id" type="varchar(255)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="customer_identifier" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="product_identifier" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
             <column name="account_identifier" type="varchar(255)">
@@ -34,16 +43,16 @@
                 <constraints nullable="true" />
             </column>
             <column name="created_by" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="created_on" type="timestamp">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="last_modified_by" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="last_modified_on" type="timestamp">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
@@ -67,7 +76,7 @@
                   file="config/liquibase/fake-data/product_instance.csv"
                   separator=";"
                   tableName="product_instance">
-            <column name="id" type="numeric"/>
+            <column name="id" type="string"/>
             <column name="customer_identifier" type="string"/>
             <column name="product_identifier" type="string"/>
             <column name="account_identifier" type="string"/>

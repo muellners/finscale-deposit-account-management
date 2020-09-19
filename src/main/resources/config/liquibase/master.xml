@@ -14,18 +14,16 @@
     <property name="uuidType" value="uuid" dbms="h2, postgresql"/>
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200803145034_added_entity_AvailableTransactionType.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200803145134_added_entity_ProductInstance.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200803145234_added_entity_Term.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200803145334_added_entity_ProductDefinition.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200803145434_added_entity_DividendDistribution.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200803145534_added_entity_Currency.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200803145634_added_entity_Charge.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200803145734_added_entity_Action.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200908144934_added_entity_TokenEntry.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200803145133_added_entity_ProductDefinition.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200803145134_added_entity_ProductInstance.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200803145434_added_entity_DividendDistribution.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200803145734_added_entity_Action.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200803145234_added_entity_Term.xml" relativeToChangelogFile="false" />
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
-    <include file="config/liquibase/changelog/20200803145334_added_entity_constraints_ProductDefinition.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200803145634_added_entity_constraints_Charge.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200803245334_added_entity_constraints_ProductDefinition.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200803245335_added_entity_constraints_DividendDistribution.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200803245336_added_entity_constraints_Term.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

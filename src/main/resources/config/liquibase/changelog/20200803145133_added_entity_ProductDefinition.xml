@@ -10,9 +10,15 @@
     <!--
         Added the entity ProductDefinition.
     -->
-    <changeSet id="20200803145334-1" author="jhipster">
+
+<!--    <changeSet id="20200803145133-1-drop" author="xurror">-->
+<!--        <preConditions onFail="MARK_RAN"><tableExists tableName="product_definition"/></preConditions>-->
+<!--        <dropTable tableName="product_definition"/>-->
+<!--    </changeSet>-->
+
+    <changeSet id="20200803145133-1" author="jhipster">
         <createTable tableName="product_definition">
-            <column name="id" type="bigint">
+            <column name="id" type="varchar(255)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="type" type="varchar(255)">
@@ -52,22 +58,22 @@
                 <constraints nullable="false" />
             </column>
             <column name="created_by" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="created_on" type="timestamp">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="last_modified_by" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="last_modified_on" type="timestamp">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
     </changeSet>
 
-    <changeSet id="20200803145334-1-relations" author="jhipster">
+    <changeSet id="20200803145133-1-relations" author="jhipster">
 
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -80,12 +86,12 @@
           This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
           Spring Boot configuration key.
     -->
-    <changeSet id="20200803145334-1-data" author="jhipster" context="faker">
+    <changeSet id="20200803145133-1-data" author="jhipster" context="faker">
         <loadData
                   file="config/liquibase/fake-data/product_definition.csv"
                   separator=";"
                   tableName="product_definition">
-            <column name="id" type="numeric"/>
+            <column name="id" type="string"/>
             <column name="type" type="string"/>
             <column name="identifier" type="string"/>
             <column name="name" type="string"/>
@@ -95,7 +101,6 @@
             <column name="cash_account_identifier" type="string"/>
             <column name="expense_account_identifier" type="string"/>
             <column name="accrue_account_identifier" type="string"/>
-            <column name="product_instance_id" type="string"/>
             <column name="interest" type="numeric"/>
             <column name="flexible" type="boolean"/>
             <column name="active" type="boolean"/>

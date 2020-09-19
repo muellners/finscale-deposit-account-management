@@ -1,11 +1,11 @@
-id;due_date;dividend_rate
-1;2020-08-02;index
-2;2020-08-02;Outdoors Stand-alone
-3;2020-08-03;Home Loan Account
-4;2020-08-02;indigo capacitor
-5;2020-08-02;ROI Buckinghamshire
-6;2020-08-03;synthesize Wyoming
-7;2020-08-02;quantifying
-8;2020-08-03;multi-byte navigate
-9;2020-08-02;Ramp Pants
-10;2020-08-02;Ball Gorgeous Granite Cheese
+id;product_identifier;due_date;dividend_rate;created_by;created_on
+bab14805-8a2b-48d1-8072-870273d5c6c9;3fa85f64-5717-4562-b3fc-2c963f66afa1;2020-08-02;index;user;2017-03-31 9:30:20
+bab14805-8a2b-48d1-8072-870273d5c678;3fa85f64-5717-4562-b3fc-2c963f66afa2;2020-08-02;Outdoors Stand-alone;user;2017-03-31 9:30:20
+bab14805-8a2b-48d1-8072-870273d5c6c7;3fa85f64-5717-4562-b3fc-2c963f66afa3;2020-08-03;Home Loan Account;user;2017-03-31 9:30:20
+bab14805-8a2b-48d1-8072-870273d5c623;3fa85f64-5717-4562-b3fc-2c963f66afa4;2020-08-02;indigo capacitor;user;2017-03-31 9:30:20
+bab14805-8a2b-48d1-8072-870273d5c6c6;3fa85f64-5717-4562-b3fc-2c963f66afa5;2020-08-02;ROI Buckinghamshire;user;2017-03-31 9:30:20
+bab14805-8a2b-48d1-8072-870273d5c6c5;3fa85f64-5717-4562-b3fc-2c963f66afa6;2020-08-03;synthesize Wyoming;user;2017-03-31 9:30:20
+bab14805-8a2b-48d1-8072-870273d5c634;3fa85f64-5717-4562-b3fc-2c963f66afa7;2020-08-02;quantifying;user;2017-03-31 9:30:20
+bab14805-8a2b-48d1-8072-870273d5c6c3;3fa85f64-5717-4562-b3fc-2c963f66afa8;2020-08-03;multi-byte navigate;user;2017-03-31 9:30:20
+bab14805-8a2b-48d1-8072-870273d5c6c2;3fa85f64-5717-4562-b3fc-2c963f66afa9;2020-08-02;Ramp Pants;user;2017-03-31 9:30:20
+bab14805-8a2b-48d1-8072-870273d5c61c;3fa85f64-5717-4562-b3fc-2c963f66af10;2020-08-02;Ball Gorgeous Granite Cheese;user;2017-03-31 9:30:20

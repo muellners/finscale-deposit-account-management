@@ -6,13 +6,19 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    
+
     <!--
         Added the entity Action.
     -->
-    <changeSet id="20200803145734-1" author="jhipster">
+
+<!--    <changeSet id="20200803145734-1-drop" author="xurror">-->
+<!--        <preConditions onFail="MARK_RAN"><tableExists tableName="action"/></preConditions>-->
+<!--        <dropTable tableName="action"/>-->
+<!--    </changeSet>-->
+
+    <changeSet id="20200803145734-1" runOnChange="false" author="jhipster">
         <createTable tableName="action">
-            <column name="id" type="bigint">
+            <column name="id" type="varchar(255)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="identifier" type="varchar(255)">
@@ -49,7 +55,7 @@
                   file="config/liquibase/fake-data/action.csv"
                   separator=";"
                   tableName="action">
-            <column name="id" type="numeric"/>
+            <column name="id" type="string"/>
             <column name="identifier" type="string"/>
             <column name="name" type="string"/>
             <column name="description" type="string"/>

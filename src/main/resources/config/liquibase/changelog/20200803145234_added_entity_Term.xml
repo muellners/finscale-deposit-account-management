@@ -6,14 +6,17 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    
+
     <!--
         Added the entity Term.
     -->
     <changeSet id="20200803145234-1" author="jhipster">
         <createTable tableName="term">
-            <column name="id" type="bigint">
+            <column name="id" type="varchar(255)">
                 <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="product_identifier" type="varchar(255)">
+                <constraints nullable="true" />
             </column>
             <column name="period" type="integer">
                 <constraints nullable="true" />
@@ -43,10 +46,11 @@
     -->
     <changeSet id="20200803145234-1-data" author="jhipster" context="faker">
         <loadData
-                  file="config/liquibase/fake-data/term.csv"
-                  separator=";"
-                  tableName="term">
-            <column name="id" type="numeric"/>
+            file="config/liquibase/fake-data/term.csv"
+            separator=";"
+            tableName="term">
+            <column name="id" type="string"/>
+            <column name="product_identifier" type="string"/>
             <column name="period" type="numeric"/>
             <column name="time_unit" type="string"/>
             <column name="interest_payable" type="string"/>
