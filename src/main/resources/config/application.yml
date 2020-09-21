@@ -107,6 +107,8 @@ management:
 spring:
   application:
     name: depositAccountManagement
+    description: A service for deposit accounts managment
+    version: 1.0
   jmx:
     enabled: false
   data:
@@ -132,6 +134,9 @@ spring:
       hibernate.cache.use_minimal_puts: true
       hibernate.cache.hazelcast.instance_name: depositAccountManagement
       hibernate.cache.hazelcast.use_lite_member: true
+
+      hibernate.show_sql: true
+      hibernate.format_sql: true
     hibernate:
       ddl-auto: none
       naming:
@@ -168,7 +173,11 @@ security:
     resource:
       filter-order: 3
       user-info-uri: http://localhost:9080/auth/realms/jhipster/protocol/openid-connect/userinfo
-
+logging:
+  level:
+    org:
+      hibernate:
+        type: trace
 server:
   servlet:
     session:
