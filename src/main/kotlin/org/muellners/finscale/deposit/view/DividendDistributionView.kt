@@ -21,7 +21,7 @@ data class DividendDistributionView(
     var id: String? = null,
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = [CascadeType.ALL])
-    @JoinColumn(name = "product_definition_id", nullable = false)
+    @JoinColumn(name = "product_identifier", nullable = false)
     var productDefinitionView: ProductDefinitionView?,
 
     @get: NotNull

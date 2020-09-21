@@ -1,10 +1,10 @@
 package org.muellners.finscale.deposit.view
 
-import java.io.Serializable
 import javax.persistence.*
 import javax.validation.constraints.*
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.muellners.finscale.deposit.domain.AbstractAuditingEntity
 import org.muellners.finscale.deposit.domain.enumeration.Type
 
 /**
@@ -58,8 +58,8 @@ data class ProductDefinitionView(
     var active: Boolean?
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
-// ) : AbstractAuditingEntity() {
-) : Serializable {
+) : AbstractAuditingEntity() {
+// ) : Serializable {
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     override fun equals(other: Any?): Boolean {

@@ -1,10 +1,10 @@
 package org.muellners.finscale.deposit.view
 
-import java.io.Serializable
 import java.util.*
 import javax.persistence.*
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.muellners.finscale.deposit.domain.AbstractAuditingEntity
 
 /**
  * A ProductInstance.
@@ -17,7 +17,7 @@ data class ProductInstanceView(
     var id: String? = null,
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = [CascadeType.ALL])
-    @JoinColumn(name = "product_definition_id", nullable = false)
+    @JoinColumn(name = "product_identifier", nullable = false)
     var productDefinitionView: ProductDefinitionView? = null,
 
     @Column(name = "customer_identifier", nullable = false)
@@ -39,8 +39,8 @@ data class ProductInstanceView(
     @Column(name = "state", nullable = false)
     var state: Boolean? = null
 
-// ) : AbstractAuditingEntity() {
-) : Serializable {
+) : AbstractAuditingEntity() {
+// ) : Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ProductInstanceView) return false

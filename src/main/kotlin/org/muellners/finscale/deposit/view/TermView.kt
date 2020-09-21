@@ -16,23 +16,23 @@ import org.muellners.finscale.deposit.domain.enumeration.TimeUnit
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 data class TermView(
     @Id
-var id: String? = null,
+    var id: String? = null,
 
     @OneToOne
-@JoinColumn(name = "product_definition_id", nullable = false, unique = true)
-var productDefinitionView: ProductDefinitionView,
+    @JoinColumn(name = "product_identifier", nullable = false, unique = true)
+    var productDefinitionView: ProductDefinitionView,
 
     @Column(name = "period")
-var period: Int? = null,
+    var period: Int? = null,
 
     @Enumerated(EnumType.STRING)
-@Column(name = "time_unit")
-var timeUnit: TimeUnit? = null,
+    @Column(name = "time_unit")
+    var timeUnit: TimeUnit? = null,
 
     @get: NotNull
-@Enumerated(EnumType.STRING)
-@Column(name = "interest_payable", nullable = false)
-var interestPayable: InterestPayable? = null
+    @Enumerated(EnumType.STRING)
+    @Column(name = "interest_payable", nullable = false)
+    var interestPayable: InterestPayable? = null
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 ) : Serializable {
