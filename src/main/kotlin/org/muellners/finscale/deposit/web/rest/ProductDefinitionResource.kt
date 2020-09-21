@@ -1,120 +1,178 @@
 package org.muellners.finscale.deposit.web.rest
 
-import org.muellners.finscale.deposit.domain.ProductDefinition
-import org.muellners.finscale.deposit.repository.ProductDefinitionRepository
-import org.muellners.finscale.deposit.web.rest.errors.BadRequestAlertException
-
 import io.github.jhipster.web.util.HeaderUtil
-import io.github.jhipster.web.util.ResponseUtil
+import java.net.URISyntaxException
+import java.util.*
+import java.util.concurrent.CompletableFuture
+import javax.validation.Valid
+import org.axonframework.commandhandling.gateway.CommandGateway
+import org.axonframework.messaging.responsetypes.ResponseTypes
+import org.axonframework.queryhandling.QueryGateway
+import org.muellners.finscale.deposit.command.*
+import org.muellners.finscale.deposit.query.GetAllProductDefinitionsQuery
+import org.muellners.finscale.deposit.query.GetDividendDistributionsQuery
+import org.muellners.finscale.deposit.query.GetProductDefinitionQuery
+import org.muellners.finscale.deposit.service.DividendDistribution
+import org.muellners.finscale.deposit.service.ProductDefinition
+import org.muellners.finscale.deposit.web.rest.errors.BadRequestAlertException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
-
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
-import javax.validation.Valid
-import java.net.URI
-import java.net.URISyntaxException
-
 private const val ENTITY_NAME = "depositAccountManagementProductDefinition"
 /**
- * REST controller for managing [org.muellners.finscale.deposit.domain.ProductDefinition].
+ * REST controller for managing [org.muellners.finscale.deposit.domain.product].
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/definitions")
 @Transactional
 class ProductDefinitionResource(
-    private val productDefinitionRepository: ProductDefinitionRepository
+    private val commandGateway: CommandGateway,
+    private val queryGateway: QueryGateway
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
+    private val ACTIVATE_PRODUCT_DEFINITION_COMMAND = "activate"
+    private val DEACTIVATE_PRODUCT_DEFINITION_COMMAND = "deactivate"
     @Value("\${jhipster.clientApp.name}")
     private var applicationName: String? = null
 
     /**
-     * `POST  /product-definitions` : Create a new productDefinition.
+     * `POST  ` : Create a new productDefinition.
      *
      * @param productDefinition the productDefinition to create.
      * @return the [ResponseEntity] with status `201 (Created)` and with body the new productDefinition, or with status `400 (Bad Request)` if the productDefinition has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/product-definitions")
-    fun createProductDefinition(@Valid @RequestBody productDefinition: ProductDefinition): ResponseEntity<ProductDefinition> {
-        log.debug("REST request to save ProductDefinition : $productDefinition")
+    @PostMapping("")
+    fun createProductDefinition(@Valid @RequestBody productDefinition: ProductDefinition): CompletableFuture<ProductDefinition>? {
+        log.debug("REST request to create a ProductDefinition : $productDefinition")
         if (productDefinition.id != null) {
             throw BadRequestAlertException(
                 "A new productDefinition cannot already have an ID",
                 ENTITY_NAME, "idexists"
             )
         }
-        val result = productDefinitionRepository.save(productDefinition)
-        return ResponseEntity.created(URI("/api/product-definitions/${result.id}"))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.id.toString()))
-            .body(result)
+        val command = CreateProductDefinitionCommand(
+            id = UUID.randomUUID(),
+            identifier = productDefinition.identifier,
+            type = productDefinition.type,
+            name = productDefinition.name,
+            description = productDefinition.description,
+            minimumBalance = productDefinition.minimumBalance,
+            equityLedgerIdentifier = productDefinition.equityLedgerIdentifier,
+            cashAccountIdentifier = productDefinition.cashAccountIdentifier,
+            expenseAccountIdentifier = productDefinition.expenseAccountIdentifier,
+            accrueAccountIdentifier = productDefinition.accrueAccountIdentifier,
+            interest = productDefinition.interest,
+            flexible = productDefinition.flexible,
+            active = productDefinition.active
+        )
+        return commandGateway.send<ProductDefinition>(command)
     }
 
     /**
-     * `PUT  /product-definitions` : Updates an existing productDefinition.
+     * `POST  /:id` : Perform an action on a productDefinition.
      *
-     * @param productDefinition the productDefinition to update.
-     * @return the [ResponseEntity] with status `200 (OK)` and with body the updated productDefinition,
-     * or with status `400 (Bad Request)` if the productDefinition is not valid,
-     * or with status `500 (Internal Server Error)` if the productDefinition couldn't be updated.
+     * @param id of the productDefinition
+     * @param command to perform on the productDefinition.
+     * @return the [ResponseEntity] with status `201 (Created)` and with body the new productInstance, or with status `400 (Bad Request)` if the productInstance has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/product-definitions")
-    fun updateProductDefinition(@Valid @RequestBody productDefinition: ProductDefinition): ResponseEntity<ProductDefinition> {
-        log.debug("REST request to update ProductDefinition : $productDefinition")
-        if (productDefinition.id == null) {
-            throw BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull")
-        }
-        val result = productDefinitionRepository.save(productDefinition)
-        return ResponseEntity.ok()
-            .headers(
-                HeaderUtil.createEntityUpdateAlert(
-                    applicationName, false, ENTITY_NAME,
-                     productDefinition.id.toString()
-                )
+    @PostMapping("/{id}")
+    fun performActionOnProductInstance(@PathVariable("id") id: String, @RequestBody command: String): CompletableFuture<ProductDefinition>? {
+        log.debug("REST request to perform action : $command")
+        return when (command.toUpperCase()) {
+            ACTIVATE_PRODUCT_DEFINITION_COMMAND -> commandGateway.send<ProductDefinition>(
+                ActivateProductDefinitionCommand(UUID.fromString(id), true)
             )
-            .body(result)
+            DEACTIVATE_PRODUCT_DEFINITION_COMMAND -> commandGateway.send<ProductDefinition>(
+                DeactivateProductDefinitionCommand(UUID.fromString(id), false)
+            )
+            else -> throw BadRequestAlertException("Unsupported command $command", ENTITY_NAME, "unknown command")
+        }
     }
-    /**
-     * `GET  /product-definitions` : get all the productDefinitions.
-     *
 
+    /**
+     * `GET  ` : get all the productDefinitions.
+     *
      * @return the [ResponseEntity] with status `200 (OK)` and the list of productDefinitions in body.
      */
-    @GetMapping("/product-definitions")    
-    fun getAllProductDefinitions(): MutableList<ProductDefinition> {
+    @GetMapping("")
+    fun getAllProductDefinitions(): CompletableFuture<MutableList<ProductDefinition>>? {
         log.debug("REST request to get all ProductDefinitions")
-                return productDefinitionRepository.findAll()
+        return queryGateway.query<MutableList<ProductDefinition>, GetAllProductDefinitionsQuery>(
+            GetAllProductDefinitionsQuery(),
+            ResponseTypes.multipleInstancesOf(ProductDefinition::class.java)
+        )
     }
 
     /**
-     * `GET  /product-definitions/:id` : get the "id" productDefinition.
+     * `GET  /:id` : get the "id" productDefinition.
      *
      * @param id the id of the productDefinition to retrieve.
      * @return the [ResponseEntity] with status `200 (OK)` and with body the productDefinition, or with status `404 (Not Found)`.
      */
-    @GetMapping("/product-definitions/{id}")
-    fun getProductDefinition(@PathVariable id: Long): ResponseEntity<ProductDefinition> {
+    @GetMapping("/{id}")
+    fun getProductDefinition(@PathVariable id: String): CompletableFuture<ProductDefinition>? {
         log.debug("REST request to get ProductDefinition : $id")
-        val productDefinition = productDefinitionRepository.findById(id)
-        return ResponseUtil.wrapOrNotFound(productDefinition)
+        return queryGateway.query<ProductDefinition, GetProductDefinitionQuery>(
+            GetProductDefinitionQuery(UUID.fromString(id)),
+            ResponseTypes.instanceOf(ProductDefinition::class.java)
+        )
     }
+
     /**
-     *  `DELETE  /product-definitions/:id` : delete the "id" productDefinition.
+     *  `DELETE  /:id` : delete the "id" productDefinition.
      *
      * @param id the id of the productDefinition to delete.
      * @return the [ResponseEntity] with status `204 (NO_CONTENT)`.
      */
-    @DeleteMapping("/product-definitions/{id}")
-    fun deleteProductDefinition(@PathVariable id: Long): ResponseEntity<Void> {
+    @DeleteMapping("/{id}")
+    fun deleteProductDefinition(@PathVariable id: String): ResponseEntity<Void> {
         log.debug("REST request to delete ProductDefinition : $id")
-
-        productDefinitionRepository.deleteById(id)
+            commandGateway.send<String>(DeleteProductDefinitionCommand(UUID.fromString(id)))
             return ResponseEntity.noContent()
-                .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build()
+                .headers(
+                    HeaderUtil.createEntityDeletionAlert(
+                        applicationName, true, ENTITY_NAME, id.toString())
+                ).build()
+    }
+
+    /**
+     * `POST  /:id` : Perform an action on a productDefinition.
+     *
+     * @param id of the productDefinition
+     * @param productDefinition's dividendDistribution
+     * @return the [ResponseEntity] with status `201 (Created)` and with body the new productInstance, or with status `400 (Bad Request)` if the productInstance has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/{id}/dividends")
+    fun dividendDistributions(@PathVariable("id") id: String, @RequestBody dividendDistribution: DividendDistribution): CompletableFuture<DividendDistribution>? {
+        log.debug("REST request to calculate dividend distributions : $dividendDistribution")
+        val command = DividendDistributionCommand(
+            id = UUID.randomUUID(),
+            productIdentifier = id,
+            dueDate = dividendDistribution.dueDate,
+            rate = dividendDistribution.rate
+        )
+        return commandGateway.send<DividendDistribution>(command)
+    }
+
+    /**
+     * `GET  /:id/dividends` : get the "id" productDefinition.
+     *
+     * @param id the id of the productDefinition to retrieve.
+     * @return the [ResponseEntity] with status `200 (OK)` and with body the productDefinition, or with status `404 (Not Found)`.
+     */
+    @GetMapping("/{id}/dividends")
+    fun getDividendDistribution(@PathVariable id: String): CompletableFuture<DividendDistribution>? {
+        log.debug("REST request to get DividendDistributions : $id")
+        return queryGateway.query<DividendDistribution, GetDividendDistributionsQuery>(
+            GetDividendDistributionsQuery(UUID.fromString(id)),
+            ResponseTypes.instanceOf(DividendDistribution::class.java)
+        )
     }
 }
